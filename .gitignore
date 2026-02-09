@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Project specific - keep these folders but ignore contents
+# Financial data (never commit personal statements or generated outputs)
+input/**
+output/**
+archive/**
+logs/**
+.actual-cache/**
+
+# Keep placeholder/readme files so folder structure is visible on GitHub
+!input/.gitkeep
+!input/README.txt
+!output/.gitkeep
+!output/README.txt
+!logs/.gitkeep
+!logs/README.txt
+
+# Local secrets/config
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
