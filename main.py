@@ -85,27 +85,6 @@ def get_csv_files_in_folder(folder_path: Path):
     return sorted([p for p in folder_path.iterdir() if p.suffix.lower() == ".csv"])
 
 
-def deduplicate_transactions(transactions):
-    """
-    Remove duplicate transactions across input files.
-    Duplicates are identified by date, payee, amount, and raw description.
-    """
-    seen = set()
-    deduped = []
-    for tx in transactions:
-        key = (
-            tx.date.strftime("%Y-%m-%d"),
-            tx.payee.strip().lower(),
-            round(float(tx.amount), 2),
-            (tx.raw_description or "").strip().lower(),
-        )
-        if key in seen:
-            continue
-        seen.add(key)
-        deduped.append(tx)
-    return deduped
-
-
 def process_account_folder(
     account_name: str,
     folder_path: Path,
@@ -150,13 +129,6 @@ def process_account_folder(
             failed_count += 1
 
     if all_transactions:
-        deduped_transactions = deduplicate_transactions(all_transactions)
-        duplicates_removed = len(all_transactions) - len(deduped_transactions)
-        if duplicates_removed > 0:
-            logger.info(f"  Removed {duplicates_removed} duplicate transaction(s)")
-            print(f"  Removed duplicates: {duplicates_removed}")
-        all_transactions = deduped_transactions
-
         logger.info(f"  Categorizing {len(all_transactions)} transactions")
         all_transactions = category_mapper.categorize_transactions(all_transactions)
 

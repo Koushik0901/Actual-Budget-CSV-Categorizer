@@ -186,6 +186,31 @@ with tempfile.TemporaryDirectory() as tmp:
     test_assert("2026-01-03,B,20.0,Income,Income" in content, "Second row present")
 
 
+test_section("TEST 7B: CSV Generator Cleanup")
+with tempfile.TemporaryDirectory() as tmp:
+    csv_gen = CSVGenerator(tmp)
+    tx_initial = [
+        Transaction(datetime(2026, 1, 1), "A", -10.0, "A", "Grocery"),
+        Transaction(datetime(2026, 1, 3), "B", 20.0, "B", "Income"),
+    ]
+    first_out = csv_gen.generate_csv(tx_initial, "test-account")
+
+    tx_expanded = tx_initial + [
+        Transaction(datetime(2026, 1, 4), "C", -5.0, "C", "Dining Out"),
+    ]
+    second_out = csv_gen.generate_csv(tx_expanded, "test-account")
+
+    test_assert(not os.path.exists(first_out), "Older consolidated output removed when range changes")
+    test_assert(os.path.exists(second_out), "Newest consolidated output kept")
+
+    account_dir = Path(tmp) / "test-account"
+    remaining_files = sorted(p.name for p in account_dir.glob("*.csv"))
+    test_assert(
+        remaining_files == ["test-account_2026-01-01-to-2026-01-04.csv"],
+        "Only latest consolidated CSV remains",
+    )
+
+
 test_section("TEST 8: End-to-End Pipeline (CSV -> Category -> Output)")
 end_to_end_csv = """Date,Date Processed,Description,Amount
 13 Dec 2025,13 Dec 2025,UBER EATS HTTPS://HELP.UB,54.34

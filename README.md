@@ -84,7 +84,7 @@ output/
 Behavior:
 - deterministic per-account/per-date-range output names
 - re-running updates the same file path (no `_1`, `_2` growth)
-- duplicate transactions across overlapping statements are removed
+- when a rerun expands the date range, older consolidated files for that account are removed automatically
 
 Output CSV schema:
 
@@ -178,14 +178,14 @@ python test_setup.py
 python test_comprehensive.py
 ```
 
-Current comprehensive suite result: **40/40 tests passing**.
+Current comprehensive suite result: **43/43 tests passing**.
 
 ## Public Repo Safety
 
 This project is designed so personal data stays local.
 
-- `input/`, `output/`, `logs/`, and `.actual-cache/` are gitignored.
-- Do not commit raw bank exports, generated categorized CSVs, or Actual cache files.
+- `input/`, `output/`, `logs/`, `.actual-cache/`, `server-files/`, and `.migrate` are gitignored.
+- Do not commit raw bank exports, generated categorized CSVs, Actual cache files, or Actual server database/state files.
 - Never hardcode server passwords in source files.
 - Before push, run:
 

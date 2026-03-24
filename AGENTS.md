@@ -11,7 +11,7 @@ The project is intentionally **CSV-only**. PDF parsing was removed.
 - Status: Production-ready for current Amex, CIBC, and Wealthsimple exports
 - Processing mode: 100% local/offline
 - Entry point: `main.py`
-- Idempotent behavior: deterministic output names + built-in duplicate transaction removal
+- Idempotent behavior: deterministic output names + stale consolidated outputs cleaned up automatically
 
 ## Workflow
 
@@ -94,7 +94,6 @@ pdf-statement-converter/
 
 - Discovers account subfolders under `input/`.
 - Parses all CSV files in each account folder.
-- Deduplicates rows across overlapping statement files.
 - Categorizes and exports account-level consolidated output.
 - Writes timestamped logs in `logs/`.
 
@@ -210,7 +209,7 @@ python test_setup.py
 python test_comprehensive.py
 ```
 
-Current comprehensive suite result: **40/40 passing**.
+Current comprehensive suite result: **43/43 passing**.
 
 ## Customization
 
@@ -240,5 +239,5 @@ categories:
 ## Public Repo Safety
 
 - Treat all statement exports and generated outputs as confidential.
-- Keep `input/`, `output/`, `logs/`, and `.actual-cache/` local-only (gitignored).
+- Keep `input/`, `output/`, `logs/`, `.actual-cache/`, `server-files/`, and `.migrate` local-only (gitignored).
 - Do not commit passwords, tokens, or Actual cache/database files.

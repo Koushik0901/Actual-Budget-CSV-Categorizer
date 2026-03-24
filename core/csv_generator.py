@@ -7,6 +7,7 @@ import pandas as pd
 from datetime import datetime
 from typing import List
 from pathlib import Path
+import re
 
 from core.models import Transaction
 
@@ -73,6 +74,9 @@ class CSVGenerator:
         account_folder = self._get_account_output_folder(account_type)
         account_folder.mkdir(parents=True, exist_ok=True)
         output_path = account_folder / filename
+
+        if not suffix:
+            self._cleanup_stale_consolidated_outputs(account_folder, account_type, filename)
         
         file_exists = output_path.exists()
         
@@ -114,6 +118,24 @@ class CSVGenerator:
         filename = '_'.join(parts) + '.csv'
         
         return filename
+
+    def _cleanup_stale_consolidated_outputs(
+        self,
+        account_folder: Path,
+        account_type: str,
+        keep_filename: str,
+    ) -> None:
+        """Remove older consolidated outputs for the same account/date-range pattern."""
+        account_clean = account_type.replace('_', '-').strip()
+        filename_pattern = re.compile(
+            rf"^{re.escape(account_clean)}_\d{{4}}-\d{{2}}-\d{{2}}-to-\d{{4}}-\d{{2}}-\d{{2}}\.csv$"
+        )
+
+        for existing_file in account_folder.glob("*.csv"):
+            if existing_file.name == keep_filename:
+                continue
+            if filename_pattern.match(existing_file.name):
+                existing_file.unlink()
     
     def get_summary(self, transactions: List[Transaction]) -> dict:
         """

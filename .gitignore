@@ -29,6 +29,8 @@ output/**
 archive/**
 logs/**
 .actual-cache/**
+server-files/**
+.migrate
 
 # Keep placeholder/readme files so folder structure is visible on GitHub
 !input/.gitkeep
